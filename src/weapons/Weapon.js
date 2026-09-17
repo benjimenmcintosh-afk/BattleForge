@@ -11,22 +11,33 @@ automatic = false
 this.name = name;
 this.damage = damage;
 this.fireRate = fireRate;
-this.magazineSize = magazineSize;
-this.reloadTime = reloadTime;
-this.projectileSpeed = projectileSpeed;
-this.automatic = automatic;
-    this.ammo = magazineSize;
+this.magazineSize =
+magazineSize;
+this.reloadTime =
+reloadTime;
+this.projectileSpeed =
+projectileSpeed;
+this.automatic =
+automatic;
+
+    this.ammo =
+        magazineSize;
+
     this.lastShotTime = 0;
+
     this.reloading = false;
 }
 
 canShoot() {
-    const currentTime = Date.now();
+    const currentTime =
+        Date.now();
 
     return (
         !this.reloading &&
         this.ammo > 0 &&
-        currentTime - this.lastShotTime >= this.fireRate
+        currentTime -
+            this.lastShotTime >=
+            this.fireRate
     );
 }
 
@@ -36,7 +47,9 @@ shoot() {
     }
 
     this.ammo--;
-    this.lastShotTime = Date.now();
+
+    this.lastShotTime =
+        Date.now();
 
     return true;
 }
@@ -44,7 +57,8 @@ shoot() {
 reload() {
     if (
         this.reloading ||
-        this.ammo === this.magazineSize
+        this.ammo ===
+            this.magazineSize
     ) {
         return;
     }
@@ -52,8 +66,11 @@ reload() {
     this.reloading = true;
 
     setTimeout(() => {
-        this.ammo = this.magazineSize;
-        this.reloading = false;
+        this.ammo =
+            this.magazineSize;
+
+        this.reloading =
+            false;
     }, this.reloadTime);
 }
 
@@ -67,4 +84,6 @@ getMagazineSize() {
 
 isReloading() {
     return this.reloading;
+}
+
 }

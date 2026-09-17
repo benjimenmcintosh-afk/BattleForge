@@ -3,10 +3,16 @@ import { Weapon } from "./Weapon.js";
 import { Projectile } from "./Projectile.js";
 
 export class WeaponManager {
-constructor(scene, player, enemyManager) {
+constructor(
+scene,
+player,
+enemyManager
+) {
 this.scene = scene;
 this.player = player;
-this.enemyManager = enemyManager;
+this.enemyManager =
+enemyManager;
+
     this.projectiles = [];
 
     this.weapons = {
@@ -41,57 +47,101 @@ this.enemyManager = enemyManager;
         )
     };
 
-    this.currentWeapon = this.weapons.pistol;
+    this.currentWeapon =
+        this.weapons.pistol;
 
     this.mouseDown = false;
 
-    this.raycaster = new THREE.Raycaster();
+    this.raycaster =
+        new THREE.Raycaster();
 
     this.setupControls();
 }
 
 setupControls() {
-    window.addEventListener("mousedown", (event) => {
-        if (event.button === 0) {
-            this.mouseDown = true;
+    window.addEventListener(
+        "mousedown",
+        (event) => {
+            if (
+                event.button === 0
+            ) {
+                this.mouseDown =
+                    true;
 
-            if (!this.currentWeapon.automatic) {
-                this.shoot();
+                if (
+                    !this.currentWeapon
+                        .automatic
+                ) {
+                    this.shoot();
+                }
             }
         }
-    });
+    );
 
-    window.addEventListener("mouseup", (event) => {
-        if (event.button === 0) {
-            this.mouseDown = false;
+    window.addEventListener(
+        "mouseup",
+        (event) => {
+            if (
+                event.button === 0
+            ) {
+                this.mouseDown =
+                    false;
+            }
         }
-    });
+    );
 
-    window.addEventListener("keydown", (event) => {
-        if (event.key === "1") {
-            this.switchWeapon("pistol");
-        }
+    window.addEventListener(
+        "keydown",
+        (event) => {
+            if (
+                event.key === "1"
+            ) {
+                this.switchWeapon(
+                    "pistol"
+                );
+            }
 
-        if (event.key === "2") {
-            this.switchWeapon("assaultRifle");
-        }
+            if (
+                event.key === "2"
+            ) {
+                this.switchWeapon(
+                    "assaultRifle"
+                );
+            }
 
-        if (event.key === "3") {
-            this.switchWeapon("shotgun");
-        }
+            if (
+                event.key === "3"
+            ) {
+                this.switchWeapon(
+                    "shotgun"
+                );
+            }
 
-        if (event.key.toLowerCase() === "r") {
-            this.currentWeapon.reload();
+            if (
+                event.key.toLowerCase() ===
+                "r"
+            ) {
+                this.currentWeapon.reload();
+            }
         }
-    });
+    );
 }
 
-switchWeapon(weaponName) {
-    if (!this.weapons[weaponName]) {
+switchWeapon(
+    weaponName
+) {
+    if (
+        !this.weapons[
+            weaponName
+        ]
+    ) {
         return;
     }
 
-    this.currentWeapon = this.weapons[weaponName];
+    this.currentWeapon =
+        this.weapons[
+            weaponName
+        ];
 
     console.log(
         "Weapon switched to: " +
@@ -100,7 +150,8 @@ switchWeapon(weaponName) {
 }
 
 shoot() {
-    const weapon = this.currentWeapon;
+    const weapon =
+        this.currentWeapon;
 
     if (!weapon.shoot()) {
         return;
@@ -114,15 +165,18 @@ shoot() {
     const direction =
         this.player.getAimDirection();
 
-    const projectile = new Projectile(
-        this.scene,
-        position,
-        direction,
-        weapon.projectileSpeed,
-        weapon.damage
-    );
+    const projectile =
+        new Projectile(
+            this.scene,
+            position,
+            direction,
+            weapon.projectileSpeed,
+            weapon.damage
+        );
 
-    this.projectiles.push(projectile);
+    this.projectiles.push(
+        projectile
+    );
 
     this.raycaster.set(
         position,
@@ -130,27 +184,47 @@ shoot() {
     );
 
     const enemies =
-        this.enemyManager.getAliveEnemies();
+        this.enemyManager
+            .getAliveEnemies();
 
     const enemyMeshes = [];
 
-    for (const enemy of enemies) {
-        enemyMeshes.push(enemy.mesh);
+    for (
+        const enemy of enemies
+    ) {
+        enemyMeshes.push(
+            enemy.mesh
+        );
     }
 
     const hits =
         this.raycaster.intersectObjects(
             enemyMeshes,
-            false
+            true
         );
 
-    if (hits.length > 0) {
-        const hitMesh = hits[0].object;
+    if (
+        hits.length > 0
+    ) {
+        let hitMesh =
+            hits[0].object;
 
-        const enemy = enemies.find(
-            (enemy) =>
-                enemy.mesh === hitMesh
-        );
+        let enemy = null;
+
+        while (
+            hitMesh &&
+            !enemy
+        ) {
+            enemy =
+                enemies.find(
+                    (candidate) =>
+                        candidate.mesh ===
+                        hitMesh
+                );
+
+            hitMesh =
+                hitMesh.parent;
+        }
 
         if (enemy) {
             enemy.takeDamage(
@@ -183,7 +257,10 @@ update() {
         this.shoot();
     }
 
-    for (const projectile of this.projectiles) {
+    for (
+        const projectile of
+        this.projectiles
+    ) {
         projectile.update();
     }
 
@@ -199,13 +276,18 @@ getCurrentWeapon() {
 }
 
 getAmmo() {
-    return this.currentWeapon.getAmmo();
+    return this.currentWeapon
+        .getAmmo();
 }
 
 getMagazineSize() {
-    return this.currentWeapon.getMagazineSize();
+    return this.currentWeapon
+        .getMagazineSize();
 }
 
 isReloading() {
-    return this.currentWeapon.isReloading();
+    return this.currentWeapon
+        .isReloading();
+}
+
 }

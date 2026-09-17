@@ -4,31 +4,27 @@ import "./style.css";
 import { Player } from "./player/Player.js";
 import { EnemyManager } from "./enemies/EnemyManager.js";
 import { WeaponManager } from "./weapons/WeaponManager.js";
+import { HUD } from "./ui/HUD.js";
 
-// --------------------------------------------------
-// BATTLE FORGE
-// --------------------------------------------------
+const scene =
+new THREE.Scene();
 
-const scene = new THREE.Scene();
+scene.background =
+new THREE.Color(
+0x080b12
+);
 
-scene.background = new THREE.Color(0x080b12);
-
-// --------------------------------------------------
-// CAMERA
-// --------------------------------------------------
-
-const camera = new THREE.PerspectiveCamera(
+const camera =
+new THREE.PerspectiveCamera(
 70,
-window.innerWidth / window.innerHeight,
+window.innerWidth /
+window.innerHeight,
 0.1,
 2000
 );
 
-// --------------------------------------------------
-// RENDERER
-// --------------------------------------------------
-
-const renderer = new THREE.WebGLRenderer({
+const renderer =
+new THREE.WebGLRenderer({
 antialias: true
 });
 
@@ -38,25 +34,28 @@ window.innerHeight
 );
 
 renderer.setPixelRatio(
-Math.min(window.devicePixelRatio, 2)
+Math.min(
+window.devicePixelRatio,
+2
+)
 );
 
 document.body.appendChild(
 renderer.domElement
 );
 
-// --------------------------------------------------
-// LIGHTING
-// --------------------------------------------------
-
-const ambientLight = new THREE.AmbientLight(
+const ambientLight =
+new THREE.AmbientLight(
 0xffffff,
 0.7
 );
 
-scene.add(ambientLight);
+scene.add(
+ambientLight
+);
 
-const mainLight = new THREE.DirectionalLight(
+const mainLight =
+new THREE.DirectionalLight(
 0xffffff,
 1.5
 );
@@ -67,141 +66,114 @@ mainLight.position.set(
 10
 );
 
-scene.add(mainLight);
+scene.add(
+mainLight
+);
 
-// --------------------------------------------------
-// ARENA
-// --------------------------------------------------
-
-const arenaGeometry = new THREE.BoxGeometry(
+const arenaGeometry =
+new THREE.BoxGeometry(
 40,
 1,
 40
 );
 
-const arenaMaterial = new THREE.MeshStandardMaterial({
-color: 0x202633
+const arenaMaterial =
+new THREE.MeshStandardMaterial({
+color: 0x202633,
+metalness: 0.3,
+roughness: 0.8
 });
 
-const arena = new THREE.Mesh(
+const arena =
+new THREE.Mesh(
 arenaGeometry,
 arenaMaterial
 );
 
-arena.position.y = -0.5;
+arena.position.y =
+-0.5;
 
-scene.add(arena);
+scene.add(
+arena
+);
 
-// --------------------------------------------------
-// FORGE
-// --------------------------------------------------
-
-const forgeGeometry = new THREE.CylinderGeometry(
+const forgeGeometry =
+new THREE.CylinderGeometry(
 3,
 4,
 5,
 8
 );
 
-const forgeMaterial = new THREE.MeshStandardMaterial({
+const forgeMaterial =
+new THREE.MeshStandardMaterial({
 color: 0x6d7485,
 metalness: 0.8,
 roughness: 0.3
 });
 
-const forge = new THREE.Mesh(
+const forge =
+new THREE.Mesh(
 forgeGeometry,
 forgeMaterial
 );
 
-forge.position.y = 2.5;
+forge.position.y =
+2.5;
 
-scene.add(forge);
+scene.add(
+forge
+);
 
-// --------------------------------------------------
-// FORGE ENERGY
-// --------------------------------------------------
-
-const energyGeometry = new THREE.SphereGeometry(
+const energyGeometry =
+new THREE.SphereGeometry(
 1.5,
 32,
 32
 );
 
-const energyMaterial = new THREE.MeshStandardMaterial({
+const energyMaterial =
+new THREE.MeshStandardMaterial({
 color: 0x4b8cff,
 emissive: 0x1a4fff,
 emissiveIntensity: 2
 });
 
-const forgeEnergy = new THREE.Mesh(
+const forgeEnergy =
+new THREE.Mesh(
 energyGeometry,
 energyMaterial
 );
 
-forgeEnergy.position.y = 5.5;
+forgeEnergy.position.y =
+5.5;
 
-scene.add(forgeEnergy);
+scene.add(
+forgeEnergy
+);
 
-// --------------------------------------------------
-// PLAYER
-// --------------------------------------------------
-
-const player = new Player(
+const player =
+new Player(
 scene,
 camera
 );
 
-// --------------------------------------------------
-// ENEMIES
-// --------------------------------------------------
-
-const enemyManager = new EnemyManager(
+const enemyManager =
+new EnemyManager(
 scene
 );
 
 enemyManager.spawnInitialEnemies();
 
-// --------------------------------------------------
-// WEAPONS
-// --------------------------------------------------
-
-const weaponManager = new WeaponManager(
+const weaponManager =
+new WeaponManager(
 scene,
 player,
 enemyManager
 );
 
-// --------------------------------------------------
-// CROSSHAIR
-// --------------------------------------------------
-
-const crosshair = document.createElement("div");
-
-crosshair.innerHTML = "+";
-
-crosshair.style.position = "fixed";
-crosshair.style.left = "50%";
-crosshair.style.top = "50%";
-crosshair.style.transform =
-"translate(-50%, -50%)";
-
-crosshair.style.color = "white";
-crosshair.style.fontSize = "28px";
-crosshair.style.fontWeight = "bold";
-crosshair.style.pointerEvents = "none";
-crosshair.style.zIndex = "1000";
-
-crosshair.style.textShadow =
-"0 0 5px black";
-
-document.body.appendChild(
-crosshair
-);
-
-// --------------------------------------------------
-// WINDOW RESIZE
-// --------------------------------------------------
+const hud =
+new HUD();
 
 window.addEventListener(
 "resize",
@@ -210,7 +182,6 @@ camera.aspect =
 window.innerWidth /
 window.innerHeight;
 
-```
     camera.updateProjectionMatrix();
 
     renderer.setSize(
@@ -218,20 +189,14 @@ window.innerHeight;
         window.innerHeight
     );
 }
-```
 
 );
-
-// --------------------------------------------------
-// GAME LOOP
-// --------------------------------------------------
 
 function animate() {
 requestAnimationFrame(
 animate
 );
 
-```
 player.update();
 
 player.updateCamera();
@@ -242,13 +207,50 @@ enemyManager.update(
 
 weaponManager.update();
 
-forgeEnergy.rotation.y += 0.01;
+hud.updateHealth(
+    player.health,
+    player.maxHealth
+);
+
+hud.updateShield(
+    player.shield,
+    player.maxShield
+);
+
+hud.updateEnergy(
+    player.energy
+);
+
+hud.updateLevel(
+    player.level,
+    player.xp,
+    player.requiredXP
+);
+
+hud.updateEnemies(
+    enemyManager.getEnemyCount(),
+    enemyManager.getTotalEnemies()
+);
+
+hud.updateWeapon(
+    weaponManager
+        .getCurrentWeapon()
+        .name,
+    weaponManager.getAmmo(),
+    weaponManager.getMagazineSize(),
+    weaponManager.isReloading()
+);
+
+forgeEnergy.rotation.y +=
+    0.01;
 
 const pulse =
     1.5 +
     Math.sin(
-        Date.now() * 0.003
-    ) * 0.15;
+        Date.now() *
+            0.003
+    ) *
+        0.15;
 
 forgeEnergy.scale.set(
     pulse,
@@ -260,7 +262,6 @@ renderer.render(
     scene,
     camera
 );
-```
 
 }
 
